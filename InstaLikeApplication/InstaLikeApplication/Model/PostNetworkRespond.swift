@@ -15,24 +15,33 @@ final class PostNetworkRespond: Codable, Identifiable {
     let id: String
     let author: String
     let width: Int
-    let url: String
-    let download_url: String
+    let url: URL
+    let downloadUrl: URL
+    var image: UIImage?
 
-    init(id: String, author: String, width: Int, url: String, download_url: String) {
+    enum CodingKeys: String, CodingKey {
+        case id, author, width, url
+        case downloadUrl = "download_url"
+    }
+
+    init(id: String, author: String, width: Int, url: URL, downloadUrl: URL, image: UIImage) {
         self.id = id
         self.author = author
         self.width = width
         self.url = url
-        self.download_url = download_url
+        self.downloadUrl = downloadUrl
+        self.image = image
     }
-//
-//        enum CodingKeys: String, CodingKey {
-//            case id = "id"
-//            case author = "author"
-//            case width = "width"
-//            case url = "url"
-//            case download_url = "download_url"
-//            case image = "image"
-//        }
 
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.author = try container.decode(String.self, forKey: .author)
+        self.width = try container.decode(Int.self, forKey: .width)
+        self.url = try container.decode(URL.self, forKey: .url)
+        self.downloadUrl = try container.decode(URL.self, forKey: .downloadUrl)
+
+        let data = try Data(contentsOf: self.downloadUrl)
+        self.image = UIImage(data: data)
+    }
 }

@@ -13,8 +13,8 @@ final class PostUser: Identifiable {
     let id: String
     let author: String
     let width: Int
-    let url: String
-    let download_url: String
+    let url: URL
+    let downloadUrl: URL
     var image: UIImage = UIImage(color: .lightGray)!
 
     init(postNetworkRespond: PostNetworkRespond) {
@@ -22,12 +22,9 @@ final class PostUser: Identifiable {
         self.author = postNetworkRespond.author
         self.width = postNetworkRespond.width
         self.url = postNetworkRespond.url
-        self.download_url = postNetworkRespond.download_url
-        guard let url = URL(string: download_url) else {
-            print("no url")
-            return
-        }
-        let data = try! Data(contentsOf: url)
+        self.downloadUrl = postNetworkRespond.downloadUrl
+
+        let data = try! Data(contentsOf: self.url)
         self.image = UIImage(data: data) ?? UIImage(color: .lightGray)!
     }
 }
